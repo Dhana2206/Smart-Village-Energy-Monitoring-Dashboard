@@ -1,0 +1,69 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 0. Default Deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    function isValidId(id) {
+      return id is string && id.size() <= 64;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // 1. User Profiles
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow create: if isOwner(userId) && isValidUser(incoming());
+      allow update: if isOwner(userId) && isValidUser(incoming()) 
+                     && incoming().role == existing().role; // Immutable role
+    }
+
+    function isValidUser(data) {
+      return data.keys().hasAll(['uid', 'email'])
+          && data.uid == request.auth.uid
+          && data.email is string
+          && data.email.size() <= 128;
+    }
+
+    // 2. Inspections
+    match /inspections/{inspectionId} {
+      // Browsing is public to authenticated users in this demo context
+      allow list: if isSignedIn();
+      allow get: if isSignedIn();
+      
+      allow create: if isSignedIn() 
+                     && isValidInspection(incoming())
+                     && incoming().uploaderId == request.auth.uid
+                     && incoming().timestamp == request.time;
+      
+      // Inspections are immutable in this system
+      allow update, delete: if false;
+    }
+
+    function isValidInspection(data) {
+      return data.keys().hasAll(['uploaderId', 'imageUrl', 'timestamp', 'status'])
+          && data.uploaderId is string
+          && data.imageUrl is string
+          && data.imageUrl.size() <= 2000000 // Support base64 for demo
+          && data.status in ['pending', 'completed', 'failed']
+          && (data.keys().size() <= 10);
+    }
+  }
+}

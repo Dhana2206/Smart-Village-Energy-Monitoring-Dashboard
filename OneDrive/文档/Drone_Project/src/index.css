@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-primary: #f59e0b; /* Amber 500 */
+  --color-brand-secondary: #0f172a; /* Slate 900 */
+  --color-brand-danger: #ef4444; /* Red 500 */
+  
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+@layer base {
+  body {
+    @apply bg-[#0b0e14] text-slate-200 antialiased;
+  }
+}
+
+.glass-panel {
+  @apply bg-[#0f172a] border border-slate-800 shadow-xl;
+}
+
+.tech-grid {
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.02) 1px, transparent 0);
+  background-size: 32px 32px;
+}

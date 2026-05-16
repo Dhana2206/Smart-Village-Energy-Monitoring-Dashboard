@@ -1,0 +1,13 @@
+{
+  "name": "DroneGuard - AI Power Line Inspection",
+  "description": "Professional drone-based fault detection system for electrical infrastructure using AI-powered image analysis.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": [
+    "AI Image Analysis",
+    "Real-time Fault Detection",
+    "Reporting Dashboard",
+    "Firebase Authentication"
+  ]
+}

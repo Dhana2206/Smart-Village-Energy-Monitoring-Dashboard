@@ -1,0 +1,52 @@
+{
+  "entities": {
+    "Inspection": {
+      "title": "Drone Inspection",
+      "description": "Records of AI-analyzed drone imagery for infrastructure fault detection.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "uploaderId": { "type": "string" },
+        "uploaderEmail": { "type": "string" },
+        "imageUrl": { "type": "string", "format": "uri" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "status": { "type": "string", "enum": ["pending", "completed", "failed"] },
+        "faultsDetected": {
+          "type": "array",
+          "items": { "type": "object" }
+        },
+        "summary": { "type": "string" },
+        "location": {
+          "type": "object",
+          "properties": {
+            "lat": { "type": "number" },
+            "lng": { "type": "number" }
+          }
+        }
+      },
+      "required": ["uploaderId", "imageUrl", "timestamp", "status"]
+    },
+    "UserProfile": {
+      "title": "User Profile",
+      "description": "Extended information for authenticated users.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "role": { "type": "string", "enum": ["user", "admin"] },
+        "displayName": { "type": "string" }
+      },
+      "required": ["uid", "email"]
+    }
+  },
+  "firestore": {
+    "/inspections/{inspectionId}": {
+      "schema": "Inspection",
+      "description": "Public (authenticated) list of infrastructure inspections."
+    },
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User profile data."
+    }
+  }
+}
